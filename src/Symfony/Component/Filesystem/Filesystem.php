@@ -270,8 +270,16 @@ class Filesystem
             throw new IOException(sprintf('Cannot rename because the target "%s" already exists.', $target), 0, null, $target);
         }
 
-        if (true !== @rename($origin, $target)) {
-            throw new IOException(sprintf('Cannot rename "%s" to "%s".', $origin, $target), 0, null, $target);
+        if (defined('PHP_WINDOWS_VERSION_BUILD') || ! function_exists('exec')) {
+            if (true !== @rename($origin, $target)) {
+                throw new IOException(sprintf('Cannot rename "%s" to "%s".', $origin, $target), 0, null, $target);
+            }
+        }
+        else {
+            exec('mv ' . escapeshellarg($origin) . ' ' . escapeshellarg($target), $output, $returnCode);
+            if (0 !== $returnCode) {
+                throw new \RuntimeException(sprintf('Could not rename "%s" to "%s".', $origin, $target));
+            }
         }
     }
 
