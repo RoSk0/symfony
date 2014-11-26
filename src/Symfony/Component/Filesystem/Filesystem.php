@@ -278,7 +278,7 @@ class Filesystem
         else {
             exec('mv ' . escapeshellarg($origin) . ' ' . escapeshellarg($target), $output, $returnCode);
             if (0 !== $returnCode) {
-                throw new \RuntimeException(sprintf('Could not rename "%s" to "%s".', $origin, $target));
+                throw new IOException(sprintf('Cannot rename "%s" to "%s".', $origin, $target), 0, null, $target);
             }
         }
     }
